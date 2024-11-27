@@ -27,29 +27,44 @@ public class FileUploadController {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    @PostMapping("/uploadFile")
-    public String uploadFile(@RequestParam("file") MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            return "Failed to upload: File is null or empty";
-        }
-        try {
-            String fileName = file.getOriginalFilename();
-            if (fileName == null || fileName.isEmpty()) {
-                return "Failed to upload: File name is null or empty";
-            }
+   @PostMapping("/uploadFile")
+   public String uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
 
-            // Extract file extension
-            String fileType = "";
-            int dotIndex = fileName.lastIndexOf('.');
-            if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
-                fileType = fileName.substring(dotIndex + 1);
-            }
-            fileStorageService.saveFile(fileName, file.getBytes(), fileType);
-            return "File uploaded successfully";
-        } catch (IOException e) {
-            return "Failed to upload: " + e.getMessage();
-        }
-    }
+       System.out.println("file::"+file.isEmpty());
+       System.out.println("file bytes ::"+file.getBytes().length);
+
+       if (file == null || file.isEmpty()) {
+           return "Failed to upload: File is null or empty";
+       }
+
+       String fileName = file.getOriginalFilename();
+       if (fileName == null || fileName.isEmpty()) {
+           return "Failed to upload: File name is null or empty";
+       }
+
+       // Extract file extension
+       String fileType = "";
+       int dotIndex = fileName.lastIndexOf('.');
+       if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
+           fileType = fileName.substring(dotIndex + 1);
+       }
+
+       // Check for duplicate file
+       if (fileStorageService.isFileExists(fileName)) {
+           return "Failed to upload: Duplicate file";
+       }
+
+       if (file.getBytes().length  == 0) {
+           return "Failed to upload: File content is empty";
+       }
+
+       try {
+           fileStorageService.saveFile(fileName, file.getBytes(), fileType);
+           return "File uploaded successfully";
+       } catch (IOException e) {
+           return "Failed to upload: " + e.getMessage();
+       }
+   }
 
     @PostMapping("/send")
     public String sendMessage(@RequestParam String message) {

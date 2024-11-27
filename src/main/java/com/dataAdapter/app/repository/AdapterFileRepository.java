@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AdapterFileRepository extends MongoRepository<FileModel,String> {
+
+    FileModel findByFileName(String fileName);
 }

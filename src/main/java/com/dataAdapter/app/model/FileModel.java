@@ -25,6 +25,7 @@ public class FileModel{
     private byte[] data;
     private LocalDateTime timestamp;
     private String fileType;
+    private String acknowledgement;
 
 
     public String getBase64Data() {
@@ -75,5 +76,13 @@ public class FileModel{
 
     public void setFileType(String fileType) {
         this.fileType = fileType;
+    }
+
+    public String getAcknowledgement() {
+        return id;
+    }
+
+    public void setAcknowledgement(String acknowledgement) {
+        this.acknowledgement = acknowledgement;
     }
 }

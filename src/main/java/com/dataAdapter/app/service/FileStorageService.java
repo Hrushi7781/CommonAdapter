@@ -13,15 +13,31 @@ public class FileStorageService {
     @Autowired
     private AdapterFileRepository adapterFileRepository;
 
-    public void saveFile(String fileName, byte[] data, String fileType) {
+    public void saveFile(String fileName, byte[] data, String fileType)
+    {
         FileModel fileModel = new FileModel();
         fileModel.setFileName(fileName);
         fileModel.setData(data);
         fileModel.setTimestamp(LocalDateTime.now());
-        fileModel.setFileType(fileType);// Updated to use LocalDateTime
-        adapterFileRepository.save(fileModel);
+        fileModel.setFileType(fileType);
+        fileModel.setAcknowledgement("File saved successfully");
+
+        try
+        {
+            adapterFileRepository.save(fileModel);
+        }
+        catch (Exception e)
+        {
+            fileModel.setAcknowledgement("Failed to save file");
+        }
+
+
     }
 
+    public boolean isFileExists(String fileName)
+    {
+        return adapterFileRepository.findByFileName(fileName) != null;
+    }
 
 
 }
