@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+
 
 @RestController
 @RequestMapping("/api/files")
@@ -32,6 +34,7 @@ public class FileUploadController {
 
        System.out.println("file::"+file.isEmpty());
        System.out.println("file bytes ::"+file.getBytes().length);
+       System.out.println("file size ::"+file.getSize());
 
        if (file == null || file.isEmpty()) {
            return "Failed to upload: File is null or empty";
@@ -57,6 +60,18 @@ public class FileUploadController {
        if (file.getBytes().length  == 0) {
            return "Failed to upload: File content is empty";
        }
+
+       /*// Example of getting content as a byte array
+       byte[] content = file.getBytes();
+       System.out.println("File content in bytes: " + Arrays.toString(content));
+
+       // Example of reading content using InputStream
+       InputStream inputStream = file.getInputStream();
+       BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+       String line;
+       while ((line = reader.readLine()) != null) {
+           System.out.println("File content line: " + line);
+       }*/
 
        try {
            fileStorageService.saveFile(fileName, file.getBytes(), fileType);
